@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Real Estate Management System</title>
+    <style>
+      body {
+        background: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover no-repeat fixed;
+      }
+
+      .title {
+        font-family: 'Comic Sans MS', cursive;
+        font-size: 24px;
+        color: #5c8a8a;
+        margin-bottom: 20px;
+        text-align:center;
+      }
+  
+
+    </style>
+    
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/home/">Real Estate</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarScroll">
+            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/home/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/home/">Our Properties</a>
+              </li>
+      
+              <li class="nav-item">
+                <a class="nav-link" href="/tenant/" tabindex="-1" aria-disabled="true">Our Tenants</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout/" tabindex="-1" aria-disabled="true">Logout</a>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+      </nav>
+          <div class="title">
+            <h1>Unit Details</h1>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-center mt-4">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPropertyModal">Add Unit</button>
+          </div>
+
+              {% if messages %}
+          <div class="d-flex align-items-center justify-content-center mt-4">
+            <div class="alert alert-warning alert-dismissible fade show w-50" role="alert">
+                {% for message in messages %}
+                <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                {% endfor %}
+            </div>
+          </div>
+            {% endif %}
+
+          <div class="container mt-5">
+            <div class="row justify-content-center">
+                
+              <div class="col-md-6">
+                {% for data in tenant_det %}
+                <div class="card mt-3">
+                  <div class="card-body">
+                    <h3 class="card-title">{{data.unit.name}}</h3>
+                    <p class="card-text">{{data.unit.features}}</p>
+                    <p class="card-text">Type : <strong>{{data.unit.type}}</strong></p>
+                    <p class="card-text">Rent : <strong>{{data.unit.rent_cost}}/-</strong></p>
+
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    {% if data.unit.is_available == True %}
+                    <a href="{% url 'core:allocate_tenant' unit=data.unit.id prop=property.id %}" class="btn btn-primary">Allocate to Tenant</a>
+                    {% else %}
+                    <li class="list-group-item">Assigned Tenant : {{data.tenant.name}}</li>
+                    <li class="list-group-item">Egreement End Date : {{data.tenant.lease_expiry_date|date:"Y/m/d"}}</li>
+                    {% endif %}
+                 
+                  </ul>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="modal fade" id="addPropertyModal" tabindex="-1" aria-labelledby="addPropertyModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="addPropertyModalLabel">Add New Unit In {{property.name}}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+          
+                  <form id="addUnitForm" action="{% url 'core:add_unit' id=property.id %}" method = 'POST'>
+                    {% csrf_token %}
+          
+                    <div class="mb-3">
+                      <label for="UnitName" class="form-label">Unit Name</label>
+                      <input type="text" required class="form-control" id="UnitName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="UnitType" class="form-label">Type</label>
+                      <select class="form-select" id="UnitType" name="type" required>
+                          <option value="1BHK">1BHK</option>
+                          <option value="2BHK">2BHK</option>
+                          <option value="3BHK">3BHK</option>
+                          <option value="4BHK">4BHK</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label for="UnitLocation" class="form-label">Rent</label>
+                      <input type="number" step="0.01" required class="form-control" id="UnitLocation" name="rent" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="UnitFeatures" class="form-label">Features</label>
+                      <textarea required class="form-control" id="UnitFeatures" name="features" required></textarea>
+                    </div>
+     
+                    <!-- Add other Unit details here -->
+          
+                    <button type="submit" class="btn btn-primary">Add Property</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <br>
+      
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+  </body>
+</html>

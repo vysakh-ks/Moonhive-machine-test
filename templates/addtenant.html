@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Real Estate Management System</title>
+    <style>
+      body {
+        background: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover no-repeat fixed;
+      }
+
+      .title {
+        font-family: 'Comic Sans MS', cursive;
+        font-size: 24px;
+        color: #5c8a8a;
+        margin-bottom: 20px;
+        text-align:center;
+      }
+        .container {
+            margin-top: 50px;
+            max-width: 600px; /* Set the maximum width of the container */
+            background-color: white; /* Set white background */
+            padding: 20px;
+            border-radius: 10px; /* Optional: Add rounded corners */
+        }
+  
+
+    </style>
+    
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/home/">Real Estate</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarScroll">
+            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/home/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/home/">Our Properties</a>
+              </li>
+      
+              <li class="nav-item">
+                <a class="nav-link" href="/tenant/" tabindex="-1" aria-disabled="true">Our Tenants</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout/" tabindex="-1" aria-disabled="true">Logout</a>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+      </nav>
+    
+      {% if messages %}
+      <div class="d-flex align-items-center justify-content-center mt-4">
+        <div class="alert alert-warning alert-dismissible fade show w-50" role="alert">
+            {% for message in messages %}
+            <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+            
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            {% endfor %}
+        </div>
+      </div>
+        {% endif %}
+        
+          <div class="container">
+            <h1 class="title">Allocate Tenant</h1>
+            <form action="{% url 'core:allocate_tenant' unit=unit.id prop=property.id %}" method='POST' enctype='multipart/form-data'>
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="propertyName" class="form-label">Tenant Name</label>
+                    <input type="text" class="form-control" id="propertyName" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="propertyAddress" class="form-label">Tenant Address</label>
+                    <textarea class="form-control" id="propertyAddress" name="address" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="monthlyRentDate" class="form-label">Monthly Rent Date</label>
+                    <input type="date" class="form-control" id="monthlyRentDate" name="rentdate" required>
+                </div>
+                <div class="mb-3">
+                    <label for="leaseExpiryDate" class="form-label">Lease Expiry Date</label>
+                    <input type="date" class="form-control" id="leaseExpiryDate" name="expirydate" required>
+                </div>
+                <div class="mb-3">
+                    <label for="documentProof" class="form-label">Document Proof</label>
+                    <input type="file" class="form-control" id="documentProof" name="document" accept=".pdf, .doc, .docx" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+  </body>
+</html>
